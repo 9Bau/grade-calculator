@@ -122,21 +122,21 @@ body.ovo #ov{display:block}
 #info .sr b{font:600 21px/1.2 Prompt;display:block}#info .sr.soc b{font-size:18px}
 #info .sr span.cr{color:#4b5563;font-size:14px}
 #info .av{display:flex;align-items:center;gap:8px}
-#info .av strong{font:700 34px Prompt;color:var(--c);width:78px}
-#info .tr{flex:1;height:12px;background:#e6ebf2;border-radius:9px;overflow:hidden}
+#info .av strong{font:700 34px Prompt;color:var(--c);flex:none;white-space:nowrap;min-width:104px}
+#info .tr{flex:1;min-width:0;height:12px;background:#e6ebf2;border-radius:9px;overflow:hidden}
 #info .tr i{display:block;height:100%;background:var(--c);border-radius:9px}
 #info .chs{display:grid;gap:7px}
 #info .sr.soc .ch b{font-size:17px}#info .sr.soc .ch em{font-size:9.5px}#info .ch{border-radius:9px!important;text-align:center;border-radius:7px;background:var(--cl);padding:1px 0}
 #info .ch em{display:block;font-style:normal;font-size:10.5px;color:#4b5563;line-height:1.35}
 #info .ch b{font:600 22px/1.15 Prompt;color:var(--cd)}
 #info .rt{background:#e6eefc;border-radius:14px;padding:16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
-#info .rt .ring2{position:relative;width:212px;height:212px}
+#info .rt .ring2{position:relative;width:250px;height:250px}
 #info .rt .ring2 svg{transform:rotate(-90deg)}
 #info .rt .ring2 div{position:absolute;inset:0;display:grid;place-content:center}
-#info .rt .ring2 b{font:700 54px/1 Prompt}
-#info .rt .ring2 span{font-size:14px;color:#4b5563}
-#info .rt p{margin:12px 0 0;font-size:15px;color:#4b5563}
-#info .rt p b{font:700 28px Prompt;color:#0f2a43}#info .bx{margin-top:14px;width:100%;border-radius:12px;padding:10px 12px;background:var(--cl);border-left:6px solid var(--c);text-align:left}#info .bx small{display:block;font-size:12.5px;color:#374151}#info .bx b{font:600 15px/1.3 Prompt;display:block}#info .bx strong{font:700 26px Prompt;color:var(--c)}
+#info .rt .ring2 b{font:700 62px/1 Prompt}
+#info .rt .ring2 span{font-size:15px;color:#4b5563}
+#info .rt p{margin:8px 0 0;font-size:15px;color:#4b5563}
+#info .rt p b{font:700 28px Prompt;color:#0f2a43}#info .bx{margin-top:10px;width:100%;border-radius:12px;padding:10px 12px;background:var(--cl);border-left:6px solid var(--c);text-align:left}#info .bx small{display:block;font-size:12.5px;color:#374151}#info .bx b{font:600 15px/1.3 Prompt;display:block}#info .bx strong{font:700 26px Prompt;color:var(--c)}
 #info .pl{padding:12px 22px 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
 #info .pc{padding:10px 14px 9px!important;background:var(--cb);border-radius:14px;padding:12px 14px;border-top:6px solid var(--c);position:relative}
 #info .pc.best{background:var(--cl)}
@@ -227,17 +227,17 @@ body.ovo #info .hd{background:linear-gradient(120deg,#0f2a43,#1e3a8a 60%,#2563eb
 <div class="card ringbox">
 <div class="ring">
 <svg width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="var(--line)" stroke-width="14"/><circle id="arc" cx="100" cy="100" r="86" fill="none" stroke="var(--brand)" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 540" style="transition:stroke-dasharray .5s"/></svg>
-<div class="big"><b id="tot">0.00</b><span>จาก 100 คะแนน</span></div>
+<div class="big"><b id="tot">0.000</b><span>จาก 100 คะแนน</span></div>
 </div>
 <div id="planName" style="font-weight:600"></div>
-<div class="gpa"><div><b id="gpa">0.00</b>เกรดเฉลี่ยรวม</div><div><b id="base">0.00</b>คะแนนเฉลี่ย (50)</div><div><b id="cnt">0/30</b>กรอกแล้ว</div></div>
+<div class="gpa"><div><b id="gpa">0.000</b>เกรดเฉลี่ยรวม</div><div><b id="base">0.000</b>คะแนนเฉลี่ย (50)</div><div><b id="cnt">0/30</b>กรอกแล้ว</div></div>
 </div>
 <div class="card"><h3 style="margin:0 0 10px;font-size:16px">คะแนนแต่ละแผนการเรียน</h3><div class="plans" id="plans"></div></div>
 <button class="ex" id="exp">ส่งออก Infographic (A4 แนวนอน)</button>
 <div class="btns"><button id="print">พิมพ์ / บันทึก PDF</button><button id="reset">ล้างข้อมูล</button></div>
 </aside>
 </main>
-<div class="mbar"><span id="mname"></span><b id="mtot">0.00</b></div>
+<div class="mbar"><span id="mname"></span><b id="mtot">0.000</b></div>
 
 <div id="ov"><div class="tb"><button class="pr" id="ipdf">พิมพ์ / บันทึก PDF</button><button id="ipng">สร้างรูป PNG</button><button id="iclose">ปิด</button></div>
 <div id="wrap"><div id="stage"><div id="info"></div></div></div>
@@ -262,14 +262,14 @@ const $=id=>document.getElementById(id);
 let mode=0,pick=null,G={},meta={};
 try{const s=JSON.parse(localStorage.getItem('m3grade')||'{}');G=s.G||{};meta=s.meta||{};mode=s.mode||0;pick=Number.isInteger(s.pick)?s.pick:null}catch(e){}
 const save=()=>{try{localStorage.setItem('m3grade',JSON.stringify({G,meta,mode,pick}))}catch(e){}};
-const fmt=x=>x.toFixed(2);
+const fmt=x=>(Math.round(x*1000+1e-6)/1000).toFixed(3),fmt3=fmt;
 const SH={sci:'วิทย์',math:'คณิต',eng:'อังกฤษ'};
 const desc=p=>{const e=Object.entries(p.w);return e.map(([k,w])=>(e.length>2?SH[k]:SUBJ.find(x=>x.k==k).n)+' '+w).join(' + ')};
 let LAST=null;
 const codes=s=>mode&&s.alt?s.alt:s.codes;
 
 function build(){
- $('subs').innerHTML=SUBJ.map(s=>`<section class="card sub${s.wide?' wide':''}" style="--c:${s.c}"><header><div><h2>${s.n}</h2><small>รวม ${s.cr.reduce((a,b)=>a+b)} หน่วยกิต</small></div><span class="avg" id="a_${s.k}">0.00</span></header><div class="rows">${
+ $('subs').innerHTML=SUBJ.map(s=>`<section class="card sub${s.wide?' wide':''}" style="--c:${s.c}"><header><div><h2>${s.n}</h2><small>รวม ${s.cr.reduce((a,b)=>a+b)} หน่วยกิต</small></div><span class="avg" id="a_${s.k}">0.000</span></header><div class="rows">${
  codes(s).map((c,i)=>`<div class="row"><span class="code">${c}</span><span class="cr">× ${s.cr[i]} หน่วยกิต</span><input inputmode="decimal" data-k="${s.k}" data-i="${i}" aria-label="เกรด ${c}" value="${(G[s.k]||[])[i]??''}" placeholder="0-4"></div>`).join('')}</div></section>`).join('');
  document.querySelectorAll('.row input').forEach(inp=>inp.addEventListener('input',()=>{
   const k=inp.dataset.k,i=+inp.dataset.i,v=inp.value.replace(',','.').trim();
@@ -292,11 +292,11 @@ function calc(){
  const totals=PLANS.map(p=>base+Object.entries(p.w).reduce((a,[k,w])=>a+avg[k]/4*w,0));
  const best=totals.indexOf(Math.max(...totals));LAST={avg,gpa,base,totals,best,filled};
  const cur=filled?(pick!=null?pick:best):null;
- $('plans').innerHTML=PLANS.map((p,i)=>i).sort((a,b)=>totals[b]-totals[a]||a-b).map(i=>{const p=PLANS[i];return `<button class="plan" style="--c:${p.c}" data-i="${i}" aria-pressed="${i===cur}"><div class="l"><span>${p.n}${filled&&i==best?'<em>สูงสุด</em>':''}</span><b>${fmt(totals[i])}</b></div><div class="bar"><i style="width:${totals[i]}%"></i></div><small><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</small></button>`}).join('');
+ $('plans').innerHTML=PLANS.map((p,i)=>i).sort((a,b)=>totals[b]-totals[a]||a-b).map(i=>{const p=PLANS[i];return `<button class="plan" style="--c:${p.c}" data-i="${i}" aria-pressed="${i===cur}"><div class="l"><span>${p.n}${filled&&i==best?'<em>สูงสุด</em>':''}</span><b>${fmt3(totals[i])}</b></div><div class="bar"><i style="width:${totals[i]}%"></i></div><small><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</small></button>`}).join('');
  document.querySelectorAll('.plan').forEach(b=>b.onclick=()=>{const k=+b.dataset.i;pick=(pick===k)?null:k;save();calc()});
- $('gpa').textContent=fmt(gpa);$('base').textContent=fmt(base);$('cnt').textContent=filled+'/30';
+ $('gpa').textContent=fmt(gpa);$('base').textContent=fmt3(base);$('cnt').textContent=filled+'/30';
  const has=cur!==null,col=has?PLANS[cur].c:'#64748b',tv=has?totals[cur]:0;
- $('tot').textContent=fmt(tv);$('tot').style.setProperty('--tc','color-mix(in srgb,'+col+' 75%,var(--ink))');$('mtot').textContent=fmt(tv);
+ $('tot').textContent=fmt3(tv);$('tot').style.setProperty('--tc','color-mix(in srgb,'+col+' 75%,var(--ink))');$('mtot').textContent=fmt3(tv);
  $('planName').textContent=has?'แผน'+PLANS[cur].n+(pick==null?' (สูงสุด)':''):'กรอกเกรดเพื่อดูคะแนนแต่ละแผน';
  $('mname').textContent=has?'แผน'+PLANS[cur].n.split(' และ')[0]+' · '+fmt(gpa)+' GPA':'กรอกเกรดเพื่อดูคะแนน';
  $('arc').setAttribute('stroke',col);document.querySelector('.ringbox').style.setProperty('--pc',col);$('arc').setAttribute('stroke-dasharray',(tv/100*540.4)+' 540.4');
@@ -317,11 +317,11 @@ function mix(a,b,t){const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const
 function renderInfo(){
  const L=LAST,d=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
  const subs=SUBJ.map(s=>{const cs=codes(s),soc=s.k=='soc',ord=soc?[0,2,4,6,8,1,3,5,7,9]:s.cr.map((_,i)=>i),nc=soc?5:s.cr.length;return `<div class="sr${s.k=='soc'?' soc':''}" style="--c:${s.c};--cb:${mix(s.c,'#ffffff',.92)};--cl:${mix(s.c,'#ffffff',.76)};--cd:${mix(s.c,'#0f2a43',.3)}"><div><b>${s.n}</b><span class="cr">${s.cr.reduce((a,b)=>a+b)} หน่วยกิต</span></div><div class="av"><strong>${fmt(L.avg[s.k])}</strong><div class="tr"><i style="width:${L.avg[s.k]/4*100}%"></i></div></div><div class="chs" style="grid-template-columns:repeat(${nc},1fr)">${ord.map(i=>{const v=val(s.k,i);return `<div class="ch"><em>${cs[i]}</em><b>${v===null?'–':v}</b></div>`}).join('')}</div></div>`}).join('');
- const top=i=>L.filled&&fmt(L.totals[i])==fmt(L.totals[L.best]),order=PLANS.map((_,i)=>i).sort((a,b)=>L.totals[b]-L.totals[a]||a-b);
- const pl=order.map(i=>{const p=PLANS[i];return `<div class="pc${top(i)?' best':''}" style="--c:${p.c};--cb:${mix(p.c,'#ffffff',.93)};--cl:${mix(p.c,'#ffffff',.84)}">${top(i)?'<span class="bg">สูงสุด</span>':''}<h4>${p.n.replace('และคณิต','และ<br>คณิต')}</h4><div class="sc">${fmt(L.totals[i])}<small> / 100</small></div><div class="tr"><i style="width:${L.totals[i]}%"></i></div><p><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</p></div>`}).join('');
+ const top=i=>L.filled&&fmt3(L.totals[i])==fmt3(L.totals[L.best]),order=PLANS.map((_,i)=>i).sort((a,b)=>L.totals[b]-L.totals[a]||a-b);
+ const pl=order.map(i=>{const p=PLANS[i];return `<div class="pc${top(i)?' best':''}" style="--c:${p.c};--cb:${mix(p.c,'#ffffff',.93)};--cl:${mix(p.c,'#ffffff',.84)}">${top(i)?'<span class="bg">สูงสุด</span>':''}<h4>${p.n.replace('และคณิต','และ<br>คณิต')}</h4><div class="sc">${fmt3(L.totals[i])}<small> / 100</small></div><div class="tr"><i style="width:${L.totals[i]}%"></i></div><p><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</p></div>`}).join('');
  const arc=L.gpa/4*471.2;
  $('info').innerHTML=`<div class="hd"><div><h1>คำนวณผลการเรียนและคะแนน ม.ต้น (5 ภาคเรียน)</h1><small>${mode?'ห้อง Intensive':'ห้องปกติ และ Gifted'} · กรอกเกรดแล้ว ${L.filled}/30 รายวิชา</small></div><div class="iwho">${esc(meta.name)||'ชื่อ-นามสกุล ........................'}<br><small style="font:400 13px 'Noto Sans Thai'">ชั้น ม.3/${esc(meta.cls)||'...'} เลขที่ ${esc(meta.no)||'...'} · ${d}</small></div></div>
- <div class="bd"><div class="lc"><div class="th"><span>รายวิชา</span><span>เกรดเฉลี่ย</span><div>${['ม.1-1','ม.1-2','ม.2-1','ม.2-2','ม.3-1'].map(t=>`<b>${t}</b>`).join('')}</div></div><div class="isubs">${subs}</div></div><div class="rt"><div class="ring2"><svg width="212" height="212" viewBox="0 0 190 190"><circle cx="95" cy="95" r="75" fill="none" stroke="#cfdcf5" stroke-width="16"/><circle cx="95" cy="95" r="75" fill="none" stroke="#2563eb" stroke-width="16" stroke-linecap="round" stroke-dasharray="${arc} 471.2"/></svg><div><b>${fmt(L.gpa)}</b><span>เกรดเฉลี่ยรวม (เต็ม 4)</span></div></div><p>คะแนนจากเกรดเฉลี่ยรวม<br><b>${fmt(L.base)}</b> / 50</p><div class="bx" style="--c:${PLANS[L.best].c};--cl:${mix(PLANS[L.best].c,'#ffffff',.82)}"><small>แผนที่ได้คะแนนสูงสุด</small><b>${PLANS[L.best].n.replace('และคณิต','และ<br>คณิต')}</b><strong>${fmt(L.totals[L.best])}</strong> / 100</div></div></div>
+ <div class="bd"><div class="lc"><div class="th"><span>รายวิชา</span><span>เกรดเฉลี่ย</span><div>${['ม.1-1','ม.1-2','ม.2-1','ม.2-2','ม.3-1'].map(t=>`<b>${t}</b>`).join('')}</div></div><div class="isubs">${subs}</div></div><div class="rt"><div class="ring2"><svg width="250" height="250" viewBox="0 0 190 190"><circle cx="95" cy="95" r="75" fill="none" stroke="#cfdcf5" stroke-width="16"/><circle cx="95" cy="95" r="75" fill="none" stroke="#2563eb" stroke-width="16" stroke-linecap="round" stroke-dasharray="${arc} 471.2"/></svg><div><b>${fmt(L.gpa)}</b><span>เกรดเฉลี่ยรวม (เต็ม 4)</span></div></div><p>คะแนนจากเกรดเฉลี่ยรวม<br><b>${fmt3(L.base)}</b> / 50</p><div class="bx" style="--c:${PLANS[L.best].c};--cl:${mix(PLANS[L.best].c,'#ffffff',.82)}"><small>แผนที่ได้คะแนนสูงสุด</small><b>${PLANS[L.best].n.replace('และคณิต','และ<br>คณิต')}</b><strong>${fmt3(L.totals[L.best])}</strong> / 100</div></div></div>
  <div class="pl">${pl}</div>
  <div class="ft"><span>คะแนนรวม = (เกรดเฉลี่ยรวม ÷ 4 × 50) + คะแนนรายวิชาตามแผน (เกรดเฉลี่ยวิชา ÷ 4 × น้ำหนัก)</span><span>เกรดเฉลี่ยรวม = Σ(เกรด × หน่วยกิต) ÷ 40</span></div>`;
 }
