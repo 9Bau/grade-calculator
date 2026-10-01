@@ -21,7 +21,7 @@ h1,h2,h3,.num{font-family:Prompt,"Noto Sans Thai",sans-serif}
 .tabs{display:inline-flex;background:rgba(255,255,255,.1);border-radius:999px;padding:4px;margin-top:18px;gap:2px}
 .tabs button{border:0;background:none;color:inherit;font:500 14px "Noto Sans Thai";padding:8px 16px;border-radius:999px;cursor:pointer;opacity:.8}
 .tabs button[aria-selected=true]{background:var(--gold);color:#1b2430;opacity:1}
-main{margin:-48px auto 0;padding:0 16px 120px;display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+main{margin:-48px auto 0;padding:0 16px 0;display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
 .who{display:grid;grid-template-columns:1fr 90px 90px;gap:12px;margin-bottom:16px}
 label.f{display:block;font-size:13px;color:var(--muted)}
@@ -80,7 +80,7 @@ main{grid-template-columns:1fr}
 @media print{
 :root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#000;--muted:#444;--line:#bbb;--brand:#2563eb;--brand-soft:#dbeafe;--gold:#facc15;--bad:#d64545;--hero:#fff;--hero-ink:#000}
 body{background:#fff;font-size:13px;line-height:1.4}
-.top{padding:0 0 12px}.top p,.tabs,.btns,.mbar,.note,.bar,.ex{display:none}
+.top{padding:0 0 12px}.top p,.tabs,.btns,.mbar,.note,.bar,.ex,.calc,.calcwrap{display:none!important}
 .top h1{font-size:22px}.top{background:#fff;color:#000}
 main{margin:0;padding:0;grid-template-columns:1fr 230px;gap:14px}
 .card{padding:12px 14px;border-radius:10px;break-inside:avoid}
@@ -100,6 +100,16 @@ main{margin:0;padding:0;grid-template-columns:1fr 230px;gap:14px}
 .gpa{gap:12px;font-size:11px}.gpa b{font-size:17px}
 }
 
+.calcwrap{padding:20px 16px 120px}.calc{margin:0}.calc summary{cursor:pointer;font:600 16px Prompt,"Noto Sans Thai",sans-serif;list-style:none;display:flex;align-items:center;gap:8px}
+.calc summary::-webkit-details-marker{display:none}.calc summary::before{content:"▸";transition:transform .2s;color:var(--brand)}.calc[open] summary::before{transform:rotate(90deg)}
+.calc .st{margin:14px 0 0;padding-top:12px;border-top:1px dashed var(--line)}.calc .st:first-of-type{border-top:0;padding-top:0}
+.calc h4{margin:0 0 4px;font:600 15px Prompt,"Noto Sans Thai",sans-serif;color:var(--brand)}
+.calc p{margin:4px 0;font-size:14px;color:var(--muted)}
+.calc .fx{display:block;margin:6px 0;padding:8px 12px;border-radius:10px;background:var(--bg);border-left:4px solid var(--brand);color:var(--ink);font:500 14px/1.5 "Noto Sans Thai",sans-serif;overflow-x:auto}
+.calc ul{margin:6px 0 0;padding:0;list-style:none;display:grid;gap:4px;font-size:13.5px}
+.calc li{padding:5px 10px;border-radius:8px;background:color-mix(in srgb,var(--c,var(--brand)) 10%,var(--surface));border-left:4px solid var(--c,var(--brand));color:var(--ink)}
+.calc li b{font-family:Prompt,"Noto Sans Thai",sans-serif;font-weight:600}
+.calc .ex2{font-size:12.5px;color:var(--muted)}
 .ex{width:100%;padding:12px;border-radius:12px;border:0;background:linear-gradient(120deg,#1e3a8a,#2563eb);color:#fff;font:600 15px "Noto Sans Thai";cursor:pointer}
 #ov{display:none;position:fixed;inset:0;z-index:20;background:#0b1622;overflow:auto;padding:0 0 24px}
 body.ovo #ov{display:block}
@@ -237,6 +247,33 @@ body.ovo #info .hd{background:linear-gradient(120deg,#0f2a43,#1e3a8a 60%,#2563eb
 <div class="btns"><button id="print">พิมพ์ / บันทึก PDF</button><button id="reset">ล้างข้อมูล</button></div>
 </aside>
 </main>
+<div class="wrap calcwrap">
+<details class="card calc" id="calcBox" open>
+<summary>วิธีคำนวณ (พร้อมตัวเลขจริงจากที่กรอก)</summary>
+<div class="st"><h4>1) เกรดเฉลี่ยรายวิชา</h4>
+<p>นำ (เกรด × หน่วยกิต) ของทุกภาคเรียนในวิชานั้นมารวมกัน แล้วหารด้วยหน่วยกิตรวมของวิชา</p>
+<code class="fx">เกรดเฉลี่ยวิชา = Σ(เกรด × หน่วยกิต) ÷ หน่วยกิตรวมของวิชา</code>
+<ul id="cSub"></ul></div>
+<div class="st"><h4>2) เกรดเฉลี่ยรวม (เต็ม 4)</h4>
+<p>รวม (เกรด × หน่วยกิต) ของทั้ง 5 วิชา หารด้วยหน่วยกิตรวมทั้งหมด 40 หน่วยกิต (คณิต วิทย์ ไทย อังกฤษ วิชาละ 7.5 และสังคมฯ 10)</p>
+<code class="fx">เกรดเฉลี่ยรวม = Σ(เกรด × หน่วยกิต) ÷ 40</code>
+<ul id="cGpa"></ul></div>
+<div class="st"><h4>3) คะแนนจากเกรดเฉลี่ยรวม (เต็ม 50)</h4>
+<p>แปลงเกรดเฉลี่ยรวมเป็นสัดส่วนของ 4 แล้วคูณ 50 ทุกแผนการเรียนใช้ส่วนนี้ร่วมกัน</p>
+<code class="fx">คะแนนส่วนนี้ = เกรดเฉลี่ยรวม ÷ 4 × 50</code>
+<ul id="cBase"></ul></div>
+<div class="st"><h4>4) คะแนนจากเกรดเฉลี่ยวิชา (เต็ม 50)</h4>
+<p>แต่ละแผนเลือกวิชาและน้ำหนักคะแนนต่างกัน (รวมกันได้ 50 คะแนนเสมอ) นำเกรดเฉลี่ยของวิชานั้นมาแปลงเป็นสัดส่วนของ 4 แล้วคูณน้ำหนัก จากนั้นรวมทุกวิชาในแผน</p>
+<code class="fx">คะแนนส่วนนี้ = Σ(เกรดเฉลี่ยวิชา ÷ 4 × น้ำหนักของวิชา)</code>
+<ul id="cSubScore"></ul></div>
+<div class="st"><h4>5) คะแนนรวมแต่ละแผน (เต็ม 100)</h4>
+<p>นำคะแนนจากข้อ 3 (เกรดเฉลี่ยรวม) มาบวกกับคะแนนจากข้อ 4 (เกรดเฉลี่ยวิชา)</p>
+<code class="fx">คะแนนรวม = คะแนนจากเกรดเฉลี่ยรวม (50) + คะแนนจากเกรดเฉลี่ยวิชา (50)</code>
+<ul id="cPlan"></ul></div>
+<div class="st"><h4>หมายเหตุ</h4>
+<p class="ex2">• ช่องที่ยังไม่กรอกจะนับเป็นเกรด 0 แต่ยังนับหน่วยกิตเต็ม ดังนั้นคะแนนจะต่ำกว่าจริงจนกว่าจะกรอกครบ 30 ช่อง<br>• ตัวเลขทุกตัวปัดเป็นทศนิยม 3 ตำแหน่งแบบปัดขึ้นเมื่อได้ 5 (เหมือน Excel) แต่การคำนวณภายในใช้ค่าเต็มก่อนปัด จึงอาจต่างจากการนำค่าที่ปัดแล้วมาคำนวณต่อได้เล็กน้อย</p></div>
+</details>
+</div>
 <div class="mbar"><span id="mname"></span><b id="mtot">0.000</b></div>
 
 <div id="ov"><div class="tb"><button class="pr" id="ipdf">พิมพ์ / บันทึก PDF</button><button id="ipng">สร้างรูป PNG</button><button id="iclose">ปิด</button></div>
@@ -282,11 +319,11 @@ function build(){
 const val=(k,i)=>{const n=parseFloat(((G[k]||[])[i]||'').toString());return isNaN(n)||n<0||n>4?null:n};
 
 function calc(){
- let sum=0,cred=0,filled=0;const avg={};
+ let sum=0,cred=0,filled=0;const avg={},det=[];
  SUBJ.forEach(s=>{
   let t=0,c=0;
   s.cr.forEach((cr,i)=>{const v=val(s.k,i);c+=cr;if(v!==null){t+=v*cr;filled++}});
-  avg[s.k]=t/c;sum+=t;cred+=c;$('a_'+s.k).textContent=fmt(avg[s.k]);
+  avg[s.k]=t/c;sum+=t;cred+=c;det.push({s,t,c});$('a_'+s.k).textContent=fmt(avg[s.k]);
  });
  const gpa=sum/cred,base=gpa/4*50;
  const totals=PLANS.map(p=>base+Object.entries(p.w).reduce((a,[k,w])=>a+avg[k]/4*w,0));
@@ -300,7 +337,17 @@ function calc(){
  $('planName').textContent=has?'แผน'+PLANS[cur].n+(pick==null?' (สูงสุด)':''):'กรอกเกรดเพื่อดูคะแนนแต่ละแผน';
  $('mname').textContent=has?'แผน'+PLANS[cur].n.split(' และ')[0]+' · '+fmt(gpa)+' GPA':'กรอกเกรดเพื่อดูคะแนน';
  $('arc').setAttribute('stroke',col);document.querySelector('.ringbox').style.setProperty('--pc',col);$('arc').setAttribute('stroke-dasharray',(tv/100*540.4)+' 540.4');
+ renderCalc(det,sum,cred,gpa,base,avg,totals);
  save();
+}
+function renderCalc(det,sum,cred,gpa,base,avg,totals){
+ const li=(h,c)=>`<li${c?` style="--c:${c}"`:''}>${h}</li>`;
+ $('cSub').innerHTML=det.map(d=>li(`${d.s.n}: ${fmt(d.t)} ÷ ${d.c} = <b>${fmt(avg[d.s.k])}</b>`,d.s.c)).join('');
+ $('cGpa').innerHTML=li(`(${det.map(d=>fmt(d.t)).join(' + ')}) ÷ ${cred}`)+li(`${fmt(sum)} ÷ ${cred} = <b>${fmt(gpa)}</b>`);
+ $('cBase').innerHTML=li(`${fmt(gpa)} ÷ 4 × 50 = <b>${fmt3(base)}</b> / 50`);
+ const sp=PLANS.map(p=>Object.entries(p.w).reduce((a,[k,w])=>a+avg[k]/4*w,0));
+ $('cSubScore').innerHTML=PLANS.map((p,i)=>li(`<b>${p.n}</b><br>${Object.entries(p.w).map(([k,w])=>`${SUBJ.find(x=>x.k==k).n} (${fmt(avg[k])} ÷ 4 × ${w})`).join(' + ')} = <b>${fmt3(sp[i])}</b> / 50`,p.c)).join('');
+ $('cPlan').innerHTML=PLANS.map((p,i)=>li(`<b>${p.n}</b><br>${fmt3(base)} + ${fmt3(sp[i])} = <b>${fmt3(totals[i])}</b> / 100`,p.c)).join('');
 }
 $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
  mode=+b.dataset.m;$('tabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',x===b));build();calc();
