@@ -259,9 +259,9 @@ const PLANS=[
 {c:'#4b5563',n:'ภาษา และภาษา Intensive',w:{eng:50}}
 ];
 const $=id=>document.getElementById(id);
-let mode=0,sel=0,G={},meta={};
-try{const s=JSON.parse(localStorage.getItem('m3grade')||'{}');G=s.G||{};meta=s.meta||{};mode=s.mode||0;sel=s.sel||0}catch(e){}
-const save=()=>{try{localStorage.setItem('m3grade',JSON.stringify({G,meta,mode,sel}))}catch(e){}};
+let mode=0,pick=null,G={},meta={};
+try{const s=JSON.parse(localStorage.getItem('m3grade')||'{}');G=s.G||{};meta=s.meta||{};mode=s.mode||0;pick=Number.isInteger(s.pick)?s.pick:null}catch(e){}
+const save=()=>{try{localStorage.setItem('m3grade',JSON.stringify({G,meta,mode,pick}))}catch(e){}};
 const fmt=x=>x.toFixed(2);
 const SH={sci:'วิทย์',math:'คณิต',eng:'อังกฤษ'};
 const desc=p=>{const e=Object.entries(p.w);return e.map(([k,w])=>(e.length>2?SH[k]:SUBJ.find(x=>x.k==k).n)+' '+w).join(' + ')};
@@ -291,12 +291,15 @@ function calc(){
  const gpa=sum/cred,base=gpa/4*50;
  const totals=PLANS.map(p=>base+Object.entries(p.w).reduce((a,[k,w])=>a+avg[k]/4*w,0));
  const best=totals.indexOf(Math.max(...totals));LAST={avg,gpa,base,totals,best,filled};
- $('plans').innerHTML=PLANS.map((p,i)=>i).sort((a,b)=>totals[b]-totals[a]||a-b).map(i=>{const p=PLANS[i];return `<button class="plan" style="--c:${p.c}" data-i="${i}" aria-pressed="${i==sel}"><div class="l"><span>${p.n}${filled&&i==best?'<em>สูงสุด</em>':''}</span><b>${fmt(totals[i])}</b></div><div class="bar"><i style="width:${totals[i]}%"></i></div><small><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</small></button>`}).join('');
- document.querySelectorAll('.plan').forEach(b=>b.onclick=()=>{sel=+b.dataset.i;save();calc()});
+ const cur=filled?(pick!=null?pick:best):null;
+ $('plans').innerHTML=PLANS.map((p,i)=>i).sort((a,b)=>totals[b]-totals[a]||a-b).map(i=>{const p=PLANS[i];return `<button class="plan" style="--c:${p.c}" data-i="${i}" aria-pressed="${i===cur}"><div class="l"><span>${p.n}${filled&&i==best?'<em>สูงสุด</em>':''}</span><b>${fmt(totals[i])}</b></div><div class="bar"><i style="width:${totals[i]}%"></i></div><small><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</small></button>`}).join('');
+ document.querySelectorAll('.plan').forEach(b=>b.onclick=()=>{const k=+b.dataset.i;pick=(pick===k)?null:k;save();calc()});
  $('gpa').textContent=fmt(gpa);$('base').textContent=fmt(base);$('cnt').textContent=filled+'/30';
- $('tot').textContent=fmt(totals[sel]);$('tot').style.setProperty('--tc','color-mix(in srgb,'+PLANS[sel].c+' 75%,var(--ink))');$('mtot').textContent=fmt(totals[sel]);
- $('planName').textContent='แผน'+PLANS[sel].n;$('mname').textContent='แผน'+PLANS[sel].n.split(' และ')[0]+' · '+fmt(gpa)+' GPA';
- $('arc').setAttribute('stroke',PLANS[sel].c);document.querySelector('.ringbox').style.setProperty('--pc',PLANS[sel].c);$('arc').setAttribute('stroke-dasharray',(totals[sel]/100*540.4)+' 540.4');
+ const has=cur!==null,col=has?PLANS[cur].c:'#64748b',tv=has?totals[cur]:0;
+ $('tot').textContent=fmt(tv);$('tot').style.setProperty('--tc','color-mix(in srgb,'+col+' 75%,var(--ink))');$('mtot').textContent=fmt(tv);
+ $('planName').textContent=has?'แผน'+PLANS[cur].n+(pick==null?' (สูงสุด)':''):'กรอกเกรดเพื่อดูคะแนนแต่ละแผน';
+ $('mname').textContent=has?'แผน'+PLANS[cur].n.split(' และ')[0]+' · '+fmt(gpa)+' GPA':'กรอกเกรดเพื่อดูคะแนน';
+ $('arc').setAttribute('stroke',col);document.querySelector('.ringbox').style.setProperty('--pc',col);$('arc').setAttribute('stroke-dasharray',(tv/100*540.4)+' 540.4');
  save();
 }
 $('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
