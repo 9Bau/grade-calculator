@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>คำนวณผลการเรียนและคะแนน ม.ต้น (5 ภาคเรียน)</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@500;600;700&family=Noto+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f5f9;--surface:#fff;--ink:#0f2a43;--muted:#5b6b7e;--line:#dbe3ec;--brand:#2563eb;--brand-soft:#dbeafe;--gold:#facc15;--bad:#d64545;--hero:#0f2a43;--hero-ink:#fff;--hero-bg:linear-gradient(120deg,#0f2a43 0%,#1e3a8a 55%,#2563eb 100%);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1622;--surface:#12212f;--ink:#e8eef5;--muted:#93a4b6;--line:#243648;--brand:#60a5fa;--brand-soft:#1e3a5f;--gold:#facc15;--bad:#ff7a7a;--hero:#0a1119;--hero-ink:#e8eef5;--hero-bg:linear-gradient(120deg,#0a1119 0%,#12306e 55%,#1d4ed8 100%)}}
+:root[data-theme="dark"]{--bg:#0b1622;--surface:#12212f;--ink:#e8eef5;--muted:#93a4b6;--line:#243648;--brand:#60a5fa;--brand-soft:#1e3a5f;--gold:#facc15;--bad:#ff7a7a;--hero:#0a1119;--hero-ink:#e8eef5;--hero-bg:linear-gradient(120deg,#0a1119 0%,#12306e 55%,#1d4ed8 100%)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 "Noto Sans Thai",system-ui,sans-serif}
+h1,h2,h3,.num{font-family:Prompt,"Noto Sans Thai",sans-serif}
+.top{background:var(--hero-bg,var(--hero));color:var(--hero-ink);padding:28px 20px 72px}
+.wrap{max-width:1120px;margin:0 auto}
+.top h1{margin:0;font-size:clamp(24px,4vw,34px);font-weight:600;letter-spacing:-.01em}
+.top p{margin:6px 0 0;opacity:.75;max-width:60ch}
+.tabs{display:inline-flex;background:rgba(255,255,255,.1);border-radius:999px;padding:4px;margin-top:18px;gap:2px}
+.tabs button{border:0;background:none;color:inherit;font:500 14px "Noto Sans Thai";padding:8px 16px;border-radius:999px;cursor:pointer;opacity:.8}
+.tabs button[aria-selected=true]{background:var(--gold);color:#1b2430;opacity:1}
+main{margin:-48px auto 0;padding:0 16px 120px;display:grid;grid-template-columns:1fr 360px;gap:20px;align-items:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.who{display:grid;grid-template-columns:1fr 90px 90px;gap:12px;margin-bottom:16px}
+label.f{display:block;font-size:13px;color:var(--muted)}
+.f input{width:100%;margin-top:4px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+input:focus-visible,button:focus-visible{outline:3px solid var(--brand);outline-offset:1px}
+.subs{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.sub.wide{grid-column:1/-1}
+.sub{--c:#3b82f6;border-top:5px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--surface))}
+.sub .code{color:color-mix(in srgb,var(--c) 75%,var(--ink))}
+.row input:not(:placeholder-shown){border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.row input:focus{border-color:var(--c)}
+.sub header{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.sub h2{font-size:18px;margin:0;font-weight:600}
+.sub small{color:var(--muted);font-size:13px}
+.avg{font:600 15px Prompt;background:color-mix(in srgb,var(--c) 18%,var(--surface));color:color-mix(in srgb,var(--c) 72%,var(--ink));padding:3px 12px;border-radius:999px;min-width:84px;text-align:center}
+.rows{display:grid;gap:0}
+.wide .rows{grid-template-columns:1fr 1fr;column-gap:24px}
+.row{display:grid;grid-template-columns:64px 1fr 72px;align-items:center;gap:8px;padding:1px 0;border-bottom:1px dashed var(--line)}
+.row .code{font-weight:500}
+.row .cr{color:var(--muted);font-size:13px}
+.row input{width:72px;padding:3px 8px;text-align:center;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:500 16px Prompt}
+.row input.bad{border-color:var(--bad);color:var(--bad)}
+.side{position:sticky;top:12px;display:grid;gap:14px}
+.ringbox{text-align:center;--pc:#2563eb;background:radial-gradient(circle at 85% -10%,color-mix(in srgb,var(--pc) 30%,transparent),transparent 55%),linear-gradient(165deg,color-mix(in srgb,var(--pc) 20%,var(--surface)),color-mix(in srgb,var(--pc) 7%,var(--surface)));border-color:color-mix(in srgb,var(--pc) 45%,var(--line));-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.ringbox .ring circle:first-child{stroke:color-mix(in srgb,var(--pc) 18%,var(--surface))}
+.ringbox .gpa{border-top:1px solid color-mix(in srgb,var(--pc) 30%,transparent);padding-top:12px}
+.ring{position:relative;width:200px;height:200px;margin:4px auto 6px}
+.ring svg{transform:rotate(-90deg)}
+.ring .big{position:absolute;inset:0;display:grid;place-content:center}
+.big b{font:700 46px/1 Prompt;color:var(--tc,var(--ink))}
+.big span{color:var(--muted);font-size:13px}
+.gpa{display:flex;justify-content:center;gap:24px;margin-top:8px;font-size:14px;color:var(--muted)}
+.gpa b{display:block;color:var(--ink);font:600 20px Prompt}
+.plans{display:grid;gap:8px}
+.plan{all:unset;box-sizing:border-box;cursor:pointer;display:block;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--surface)}
+.plan{border-left:6px solid var(--c)}.plan[aria-pressed=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface))}
+.plan:focus-visible{outline:3px solid var(--c)}
+.plan .l{display:flex;justify-content:space-between;gap:8px;font-size:14px;font-weight:500}
+.plan .l b{font:600 16px Prompt;white-space:nowrap}
+.plan .l em{font-style:normal;font-size:12px;background:var(--gold);color:#1b2430;border-radius:999px;padding:0 8px;margin-left:6px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin-top:8px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c);border-radius:9px;transition:width .3s}
+.plan small{color:var(--muted);font-size:12px}.plan small span{white-space:nowrap}
+.note{font-size:13px;color:var(--muted)}
+.btns{display:flex;gap:8px}
+.btns button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:500 14px "Noto Sans Thai";cursor:pointer}
+.mbar{display:none}
+@media(max-width:900px){
+main{grid-template-columns:1fr}
+.side{position:static}
+.subs{grid-template-columns:1fr}.wide .rows{grid-template-columns:1fr}
+.who{grid-template-columns:1fr 1fr 1fr}.who label:first-child{grid-column:1/-1}
+.mbar{display:flex;position:fixed;left:0;right:0;bottom:0;background:var(--hero);color:var(--hero-ink);padding:10px 20px calc(10px + env(safe-area-inset-bottom,0px));justify-content:space-between;align-items:center;z-index:5}
+.mbar b{font:700 24px Prompt;color:var(--gold)}
+}
+@media print{
+:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--surface:#fff;--ink:#000;--muted:#444;--line:#bbb;--brand:#2563eb;--brand-soft:#dbeafe;--gold:#facc15;--bad:#d64545;--hero:#fff;--hero-ink:#000}
+body{background:#fff;font-size:13px;line-height:1.4}
+.top{padding:0 0 12px}.top p,.tabs,.btns,.mbar,.note,.bar,.ex{display:none}
+.top h1{font-size:22px}.top{background:#fff;color:#000}
+main{margin:0;padding:0;grid-template-columns:1fr 230px;gap:14px}
+.card{padding:12px 14px;border-radius:10px;break-inside:avoid}
+.who{margin-bottom:12px;gap:10px}.f input{padding:5px 8px;font-size:13px}
+.subs{gap:12px}.sub h2{font-size:16px}.sub small{font-size:11px}.avg{font-size:14px;padding:1px 10px;min-width:70px}
+.sub{--c:#3b82f6;border-top:5px solid var(--c);background:color-mix(in srgb,var(--c) 6%,var(--surface))}
+.sub .code{color:color-mix(in srgb,var(--c) 75%,var(--ink))}
+.row input:not(:placeholder-shown){border-color:var(--c);background:color-mix(in srgb,var(--c) 12%,var(--bg))}
+.row input:focus{border-color:var(--c)}
+.sub header{margin-bottom:8px}
+.row{padding:3px 0;grid-template-columns:50px 1fr 52px;gap:4px}
+.row input{width:52px;padding:3px 4px;font-size:14px;border-radius:6px}
+.row .cr{font-size:10.5px;white-space:nowrap}
+.side{position:static;gap:12px}
+.ring{width:150px;height:150px}.ring svg{width:150px;height:150px}.big b{font-size:34px}
+.plan{padding:8px 10px}.plan .l{font-size:12px}.plan small{display:none}
+.gpa{gap:12px;font-size:11px}.gpa b{font-size:17px}
+}
+
+.ex{width:100%;padding:12px;border-radius:12px;border:0;background:linear-gradient(120deg,#1e3a8a,#2563eb);color:#fff;font:600 15px "Noto Sans Thai";cursor:pointer}
+#ov{display:none;position:fixed;inset:0;z-index:20;background:#0b1622;overflow:auto;padding:0 0 24px}
+body.ovo #ov{display:block}
+.tb{position:sticky;top:0;z-index:2;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;padding:calc(10px + env(safe-area-inset-top,0px)) 12px 10px;background:#0f2a43}
+.tb button{padding:9px 16px;border-radius:999px;border:0;font:500 14px "Noto Sans Thai";cursor:pointer;background:#fff;color:#0f2a43}
+.tb button.pr{background:var(--gold)}
+#wrap{margin:16px auto 0;overflow:hidden}
+#stage{transform-origin:0 0;width:1123px}
+#pngwrap{display:none;text-align:center;color:#fff;padding:16px}
+#pngwrap img{max-width:100%;border-radius:8px;background:#fff}
+#info{width:1123px;height:793px;overflow:hidden;background:#f6f8fc;color:#0f2a43;font:400 13px/1.35 "Noto Sans Thai",sans-serif;display:flex;flex-direction:column;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+#info *{box-sizing:border-box}
+#info .hd{padding-top:13px!important;padding-bottom:13px!important;background:radial-gradient(circle at 92% -40%,rgba(250,204,21,.45),transparent 45%),linear-gradient(120deg,#0f2a43,#1e3a8a 55%,#2563eb);color:#fff;padding:20px 28px;display:flex;justify-content:space-between;align-items:center}
+#info .hd h1{font:600 30px Prompt;margin:0}
+#info .hd small{opacity:.85;font-size:15px}
+#info .iwho{text-align:right;font:600 21px Prompt}
+#info .bd{flex:1;min-height:0;overflow:hidden;padding:14px 22px 0;display:grid;grid-template-columns:1fr 300px;gap:16px;min-height:0}
+#info .lc{display:flex;flex-direction:column;gap:5px;min-height:0}#info .th{display:grid;grid-template-columns:150px 210px 1fr;gap:12px;padding:0 14px 0 21px;font:600 13px Prompt;color:#374151;align-items:end}#info .th div{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;text-align:center}#info .th div b{font:600 15px Prompt;color:#0f2a43;background:#dbe5f7;border-radius:7px;padding:0 0 1px}#info .isubs{flex:1;display:grid;gap:6px;min-height:0;grid-template-columns:1fr;grid-template-rows:repeat(5,1fr);align-self:stretch}
+#info .sr{display:grid;grid-template-columns:150px 210px 1fr;align-items:center;gap:12px;border-radius:12px;padding:6px 14px;border-left:7px solid var(--c);background:var(--cb)}
+#info .sr b{font:600 21px/1.2 Prompt;display:block}#info .sr.soc b{font-size:18px}
+#info .sr span.cr{color:#4b5563;font-size:14px}
+#info .av{display:flex;align-items:center;gap:8px}
+#info .av strong{font:700 34px Prompt;color:var(--c);width:78px}
+#info .tr{flex:1;height:12px;background:#e6ebf2;border-radius:9px;overflow:hidden}
+#info .tr i{display:block;height:100%;background:var(--c);border-radius:9px}
+#info .chs{display:grid;gap:7px}
+#info .sr.soc .ch b{font-size:17px}#info .sr.soc .ch em{font-size:9.5px}#info .ch{border-radius:9px!important;text-align:center;border-radius:7px;background:var(--cl);padding:1px 0}
+#info .ch em{display:block;font-style:normal;font-size:10.5px;color:#4b5563;line-height:1.35}
+#info .ch b{font:600 22px/1.15 Prompt;color:var(--cd)}
+#info .rt{background:#e6eefc;border-radius:14px;padding:16px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+#info .rt .ring2{position:relative;width:212px;height:212px}
+#info .rt .ring2 svg{transform:rotate(-90deg)}
+#info .rt .ring2 div{position:absolute;inset:0;display:grid;place-content:center}
+#info .rt .ring2 b{font:700 54px/1 Prompt}
+#info .rt .ring2 span{font-size:14px;color:#4b5563}
+#info .rt p{margin:12px 0 0;font-size:15px;color:#4b5563}
+#info .rt p b{font:700 28px Prompt;color:#0f2a43}#info .bx{margin-top:14px;width:100%;border-radius:12px;padding:10px 12px;background:var(--cl);border-left:6px solid var(--c);text-align:left}#info .bx small{display:block;font-size:12.5px;color:#374151}#info .bx b{font:600 15px/1.3 Prompt;display:block}#info .bx strong{font:700 26px Prompt;color:var(--c)}
+#info .pl{padding:12px 22px 0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+#info .pc{padding:10px 14px 9px!important;background:var(--cb);border-radius:14px;padding:12px 14px;border-top:6px solid var(--c);position:relative}
+#info .pc.best{background:var(--cl)}
+#info .pc h4{margin:0;font:600 14.5px/1.25 Prompt;height:36px}
+#info .pc .sc{font:700 40px/1.1 Prompt;color:var(--c)}
+#info .pc .sc small{font:500 14px Prompt;color:#5b6b7e}
+#info .pc .tr{margin:6px 0;display:block;flex:none}
+#info .pc p span{white-space:nowrap}#info .pc p{margin:0;font-size:12px;color:#5b6b7e;line-height:1.3}
+#info .pc .bg{position:absolute;right:10px;top:12px;background:#facc15;color:#1b2430;font:600 11px Prompt;border-radius:999px;padding:1px 9px}
+#info .ft{padding:7px 22px 10px;font-size:12px;color:#5b6b7e;display:flex;justify-content:space-between}
+@media print{
+body:not(.ovo) main{grid-template-columns:1fr 230px!important}
+body:not(.ovo) .subs{grid-template-columns:repeat(2,1fr)!important}
+body:not(.ovo) .wide .rows{grid-template-columns:1fr 1fr!important}
+body:not(.ovo) .who{grid-template-columns:1fr 90px 90px!important}
+body:not(.ovo) .mbar{display:none!important}
+body:not(.ovo) .row{padding:0!important;gap:3px!important;grid-template-columns:48px 1fr 46px!important}
+body:not(.ovo) .row input{width:46px!important;padding:1px 3px!important;font-size:13px!important;line-height:1.25!important;border-radius:5px!important}
+body:not(.ovo) .row .cr{font-size:10px!important}
+body:not(.ovo) .row .code{font-size:12.5px!important}
+body:not(.ovo) .sub{padding:9px 12px!important}
+body:not(.ovo) .sub header{margin-bottom:4px!important}
+body:not(.ovo) .card.who{padding:8px 12px!important;margin-bottom:10px!important}
+body:not(.ovo) .who .f{font-size:11px!important}
+body:not(.ovo) .ringbox{padding:10px!important}
+body:not(.ovo) .ring,body:not(.ovo) .ring svg{width:130px!important;height:130px!important}
+body:not(.ovo) .big b{font-size:30px!important}
+body:not(.ovo) .plan{padding:6px 10px!important}
+body:not(.ovo) .top{padding:0 0 8px!important}
+body:not(.ovo) .top h1{font-size:20px!important}
+body:not(.ovo) .side .plan{box-sizing:border-box!important;width:100%!important;min-width:0;-webkit-print-color-adjust:exact;print-color-adjust:exact;background:color-mix(in srgb,var(--c) 11%,#fff)!important;border:1.5px solid color-mix(in srgb,var(--c) 40%,#fff)!important;border-left:7px solid var(--c)!important;border-radius:14px!important;padding:8px 12px!important}
+body:not(.ovo) .side .plan .l{flex-wrap:wrap;font-size:14px!important;font-weight:600;align-items:flex-start}
+body:not(.ovo) .side .plan .l b{font:700 22px/1.1 Prompt,"Noto Sans Thai",sans-serif!important;color:#0f2a43}
+body:not(.ovo) .side .plan small{font-size:12px!important;color:#374151!important;margin-top:5px!important;line-height:1.35}
+body:not(.ovo) .side .plan[aria-pressed=true]{background:color-mix(in srgb,var(--c) 20%,#fff)!important}
+body:not(.ovo) .side .plan{position:relative!important;display:flex!important;flex-direction:column;justify-content:center;padding:9px 12px 9px 14px!important}
+body:not(.ovo) .side .plan .l{display:flex!important;flex-direction:column-reverse!important;align-items:flex-start!important;justify-content:flex-start!important;gap:3px!important}
+body:not(.ovo) .side .plan .l b{font:700 30px/1 Prompt,"Noto Sans Thai",sans-serif!important;color:#0f2a43!important;letter-spacing:-.01em}
+body:not(.ovo) .side .plan .l span{display:block;font-size:14.5px!important;font-weight:700;color:#000;line-height:1.3;padding-right:0}
+body:not(.ovo) .side .plan .l em{position:absolute!important;right:10px;top:10px;margin:0!important;font-size:11px!important;font-weight:600}
+body:not(.ovo) .side .plan small{font-size:12.5px!important;color:#374151!important;margin-top:4px!important;line-height:1.35}
+body:not(.ovo) .side .plans{grid-template-rows:repeat(4,minmax(min-content,1fr))!important;grid-auto-rows:auto!important}
+body:not(.ovo) main{overflow:visible;break-after:avoid;page-break-after:avoid;height:244mm;align-items:stretch;padding:0}
+body:not(.ovo) main>section{display:flex;flex-direction:column;min-height:0}
+body:not(.ovo) .subs{flex:1;min-height:0;grid-template-rows:repeat(3,minmax(min-content,1fr));align-content:stretch}
+body:not(.ovo) .sub{display:flex;flex-direction:column}
+body:not(.ovo) .sub .rows{flex:1;align-content:space-between}
+body:not(.ovo) .side{display:flex;flex-direction:column;min-height:0}
+body:not(.ovo) .side>.card:nth-of-type(2){flex:1;display:flex;flex-direction:column}
+body:not(.ovo) .side .plans{flex:1;grid-auto-rows:1fr;gap:10px}
+body:not(.ovo) .side .plan{display:flex;flex-direction:column;justify-content:center}
+body:not(.ovo) .side .plan .l{font-size:14px}
+body:not(.ovo) .side .plan small{display:block;font-size:11px;margin-top:3px}
+html,body.ovo{height:auto!important;margin:0!important;padding:0!important;background:#fff!important;overflow:hidden!important}
+:root{padding:0!important}
+body.ovo>*:not(#ov){display:none!important}
+body.ovo #ov{display:block!important;position:absolute!important;inset:auto!important;top:0;left:0;width:296mm;height:209mm;margin:0;padding:0;background:#fff;overflow:hidden}
+body.ovo .tb,body.ovo #pngwrap{display:none!important}
+body.ovo #wrap{display:block!important;margin:0!important;width:auto!important;height:auto!important;overflow:hidden}
+body.ovo #stage{transform:none!important;width:1123px;zoom:.9855}
+body.ovo #info{width:1123px;height:792px;break-inside:avoid;page-break-after:avoid;page-break-inside:avoid}
+body.ovo #info .hd{background:linear-gradient(120deg,#0f2a43,#1e3a8a 60%,#2563eb)!important}
+}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap">
+<h1>คำนวณผลการเรียนและคะแนน ม.ต้น (5 ภาคเรียน)</h1>
+<p>กรอกเกรดรายวิชาพื้นฐาน 5 ภาคเรียน ระบบจะคำนวณเกรดเฉลี่ยและคะแนนเต็ม 100 ของแต่ละแผนการเรียนให้ทันที</p>
+<div class="tabs" role="tablist" id="tabs">
+<button role="tab" data-m="0" aria-selected="true">ห้องปกติ และ Gifted</button>
+<button role="tab" data-m="1" aria-selected="false">ห้อง Intensive</button>
+</div>
+</div></div>
+
+<main class="wrap">
+<section>
+<div class="card who">
+<label class="f">ชื่อ-นามสกุล<input id="name" placeholder="เช่น ด.ช. สมชาย ใจดี"></label>
+<label class="f">ชั้น ม.3/<input id="cls" inputmode="numeric"></label>
+<label class="f">เลขที่<input id="no" inputmode="numeric"></label>
+</div>
+<div class="subs" id="subs"></div>
+<p class="note">กรอกเกรดได้ตั้งแต่ 0 ถึง 4 (เช่น 3.5) เฉพาะช่องในตารางนี้เท่านั้น ข้อมูลถูกจำไว้ในเครื่องของคุณ</p>
+</section>
+
+<aside class="side">
+<div class="card ringbox">
+<div class="ring">
+<svg width="200" height="200" viewBox="0 0 200 200"><circle cx="100" cy="100" r="86" fill="none" stroke="var(--line)" stroke-width="14"/><circle id="arc" cx="100" cy="100" r="86" fill="none" stroke="var(--brand)" stroke-width="14" stroke-linecap="round" stroke-dasharray="0 540" style="transition:stroke-dasharray .5s"/></svg>
+<div class="big"><b id="tot">0.00</b><span>จาก 100 คะแนน</span></div>
+</div>
+<div id="planName" style="font-weight:600"></div>
+<div class="gpa"><div><b id="gpa">0.00</b>เกรดเฉลี่ยรวม</div><div><b id="base">0.00</b>คะแนนเฉลี่ย (50)</div><div><b id="cnt">0/30</b>กรอกแล้ว</div></div>
+</div>
+<div class="card"><h3 style="margin:0 0 10px;font-size:16px">คะแนนแต่ละแผนการเรียน</h3><div class="plans" id="plans"></div></div>
+<button class="ex" id="exp">ส่งออก Infographic (A4 แนวนอน)</button>
+<div class="btns"><button id="print">พิมพ์ / บันทึก PDF</button><button id="reset">ล้างข้อมูล</button></div>
+</aside>
+</main>
+<div class="mbar"><span id="mname"></span><b id="mtot">0.00</b></div>
+
+<div id="ov"><div class="tb"><button class="pr" id="ipdf">พิมพ์ / บันทึก PDF</button><button id="ipng">สร้างรูป PNG</button><button id="iclose">ปิด</button></div>
+<div id="wrap"><div id="stage"><div id="info"></div></div></div>
+<div id="pngwrap"><p>กดค้างที่รูป (มือถือ) หรือคลิกขวา (คอมพิวเตอร์) แล้วเลือกบันทึกรูปภาพ</p><img id="pngimg" alt="Infographic"><p><button id="pback" style="padding:9px 18px;border-radius:999px;border:0">กลับ</button></p></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const T=(p,n)=>[...Array(n)].map((_,i)=>p[i]);
+const SUBJ=[
+{k:'math',c:'#3b82f6',n:'คณิตศาสตร์',codes:['ค21103','ค21104','ค22103','ค22104','ค23103'],cr:[1.5,1.5,1.5,1.5,1.5]},
+{k:'sci',c:'#16a34a',n:'วิทยาศาสตร์',codes:['ว21103','ว21104','ว22103','ว22104','ว23103'],cr:[1.5,1.5,1.5,1.5,1.5]},
+{k:'thai',c:'#ef4444',n:'ภาษาไทย',codes:['ท21101','ท21102','ท22101','ท22102','ท23101'],cr:[1.5,1.5,1.5,1.5,1.5]},
+{k:'eng',c:'#eab308',n:'ภาษาอังกฤษ',codes:['อ21101','อ21102','อ22101','อ22102','อ23101'],alt:['อ21103','อ21104','อ22103','อ22104','อ23103'],cr:[1.5,1.5,1.5,1.5,1.5]},
+{k:'soc',c:'#6b7280',n:'สังคมและประวัติศาสตร์',wide:1,codes:['ส21101','ส21102','ส21103','ส21104','ส22101','ส22102','ส22103','ส22104','ส23101','ส23102'],cr:[1.5,.5,1.5,.5,1.5,.5,1.5,.5,1.5,.5]}
+];
+const PLANS=[
+{c:'#16a34a',n:'วิทย์ - คณิต',w:{sci:25,math:25}},
+{c:'#3b82f6',n:'คณิต - อังกฤษ และคณิต - อังกฤษ Intensive',w:{math:25,eng:25}},
+{c:'#eab308',n:'วิทย์ - คณิต Intensive',w:{sci:15,math:15,eng:20}},
+{c:'#4b5563',n:'ภาษา และภาษา Intensive',w:{eng:50}}
+];
+const $=id=>document.getElementById(id);
+let mode=0,sel=0,G={},meta={};
+try{const s=JSON.parse(localStorage.getItem('m3grade')||'{}');G=s.G||{};meta=s.meta||{};mode=s.mode||0;sel=s.sel||0}catch(e){}
+const save=()=>{try{localStorage.setItem('m3grade',JSON.stringify({G,meta,mode,sel}))}catch(e){}};
+const fmt=x=>x.toFixed(2);
+const SH={sci:'วิทย์',math:'คณิต',eng:'อังกฤษ'};
+const desc=p=>{const e=Object.entries(p.w);return e.map(([k,w])=>(e.length>2?SH[k]:SUBJ.find(x=>x.k==k).n)+' '+w).join(' + ')};
+let LAST=null;
+const codes=s=>mode&&s.alt?s.alt:s.codes;
+
+function build(){
+ $('subs').innerHTML=SUBJ.map(s=>`<section class="card sub${s.wide?' wide':''}" style="--c:${s.c}"><header><div><h2>${s.n}</h2><small>รวม ${s.cr.reduce((a,b)=>a+b)} หน่วยกิต</small></div><span class="avg" id="a_${s.k}">0.00</span></header><div class="rows">${
+ codes(s).map((c,i)=>`<div class="row"><span class="code">${c}</span><span class="cr">× ${s.cr[i]} หน่วยกิต</span><input inputmode="decimal" data-k="${s.k}" data-i="${i}" aria-label="เกรด ${c}" value="${(G[s.k]||[])[i]??''}" placeholder="0-4"></div>`).join('')}</div></section>`).join('');
+ document.querySelectorAll('.row input').forEach(inp=>inp.addEventListener('input',()=>{
+  const k=inp.dataset.k,i=+inp.dataset.i,v=inp.value.replace(',','.').trim();
+  (G[k]=G[k]||[])[i]=v;
+  const n=parseFloat(v);inp.classList.toggle('bad',v!==''&&(isNaN(n)||n<0||n>4));
+  calc();
+ }));
+ document.querySelectorAll('.row input').forEach(i=>i.classList.remove('bad'));
+}
+const val=(k,i)=>{const n=parseFloat(((G[k]||[])[i]||'').toString());return isNaN(n)||n<0||n>4?null:n};
+
+function calc(){
+ let sum=0,cred=0,filled=0;const avg={};
+ SUBJ.forEach(s=>{
+  let t=0,c=0;
+  s.cr.forEach((cr,i)=>{const v=val(s.k,i);c+=cr;if(v!==null){t+=v*cr;filled++}});
+  avg[s.k]=t/c;sum+=t;cred+=c;$('a_'+s.k).textContent=fmt(avg[s.k]);
+ });
+ const gpa=sum/cred,base=gpa/4*50;
+ const totals=PLANS.map(p=>base+Object.entries(p.w).reduce((a,[k,w])=>a+avg[k]/4*w,0));
+ const best=totals.indexOf(Math.max(...totals));LAST={avg,gpa,base,totals,best,filled};
+ $('plans').innerHTML=PLANS.map((p,i)=>i).sort((a,b)=>totals[b]-totals[a]||a-b).map(i=>{const p=PLANS[i];return `<button class="plan" style="--c:${p.c}" data-i="${i}" aria-pressed="${i==sel}"><div class="l"><span>${p.n}${filled&&i==best?'<em>สูงสุด</em>':''}</span><b>${fmt(totals[i])}</b></div><div class="bar"><i style="width:${totals[i]}%"></i></div><small><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</small></button>`}).join('');
+ document.querySelectorAll('.plan').forEach(b=>b.onclick=()=>{sel=+b.dataset.i;save();calc()});
+ $('gpa').textContent=fmt(gpa);$('base').textContent=fmt(base);$('cnt').textContent=filled+'/30';
+ $('tot').textContent=fmt(totals[sel]);$('tot').style.setProperty('--tc','color-mix(in srgb,'+PLANS[sel].c+' 75%,var(--ink))');$('mtot').textContent=fmt(totals[sel]);
+ $('planName').textContent='แผน'+PLANS[sel].n;$('mname').textContent='แผน'+PLANS[sel].n.split(' และ')[0]+' · '+fmt(gpa)+' GPA';
+ $('arc').setAttribute('stroke',PLANS[sel].c);document.querySelector('.ringbox').style.setProperty('--pc',PLANS[sel].c);$('arc').setAttribute('stroke-dasharray',(totals[sel]/100*540.4)+' 540.4');
+ save();
+}
+$('tabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+ mode=+b.dataset.m;$('tabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',x===b));build();calc();
+});
+['name','cls','no'].forEach(id=>{$(id).value=meta[id]||'';$(id).addEventListener('input',()=>{meta[id]=$(id).value;save()})});
+$('reset').onclick=()=>{if(confirm('ล้างเกรดที่กรอกทั้งหมด?')){G={};build();calc()}};
+$('print').onclick=()=>{pageStyle(false);pageStyle(true,'@page{size:210mm 297mm;margin:12mm}');const rm=()=>{pageStyle(false);removeEventListener('afterprint',rm)};addEventListener('afterprint',rm);window.print()};
+$('tabs').querySelectorAll('button').forEach(x=>x.setAttribute('aria-selected',+x.dataset.m===mode));
+build();calc();
+const esc=t=>String(t||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function pageStyle(on,css){let st=document.getElementById('pgst');if(on&&!st){st=document.createElement('style');st.id='pgst';st.textContent=css||'@page{size:297mm 210mm;margin:0}';document.head.appendChild(st)}else if(!on&&st)st.remove()}
+function fit(){const w=Math.min(1,(innerWidth-24)/1123);$('stage').style.transform='scale('+w+')';$('wrap').style.width=1123*w+'px';$('wrap').style.height=793*w+'px'}
+function mix(a,b,t){const h=x=>[1,3,5].map(i=>parseInt(x.slice(i,i+2),16));const A=h(a),B=h(b);return '#'+A.map((v,i)=>Math.round(v*(1-t)+B[i]*t).toString(16).padStart(2,'0')).join('')}
+function renderInfo(){
+ const L=LAST,d=new Date().toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+ const subs=SUBJ.map(s=>{const cs=codes(s),soc=s.k=='soc',ord=soc?[0,2,4,6,8,1,3,5,7,9]:s.cr.map((_,i)=>i),nc=soc?5:s.cr.length;return `<div class="sr${s.k=='soc'?' soc':''}" style="--c:${s.c};--cb:${mix(s.c,'#ffffff',.92)};--cl:${mix(s.c,'#ffffff',.76)};--cd:${mix(s.c,'#0f2a43',.3)}"><div><b>${s.n}</b><span class="cr">${s.cr.reduce((a,b)=>a+b)} หน่วยกิต</span></div><div class="av"><strong>${fmt(L.avg[s.k])}</strong><div class="tr"><i style="width:${L.avg[s.k]/4*100}%"></i></div></div><div class="chs" style="grid-template-columns:repeat(${nc},1fr)">${ord.map(i=>{const v=val(s.k,i);return `<div class="ch"><em>${cs[i]}</em><b>${v===null?'–':v}</b></div>`}).join('')}</div></div>`}).join('');
+ const top=i=>L.filled&&fmt(L.totals[i])==fmt(L.totals[L.best]),order=PLANS.map((_,i)=>i).sort((a,b)=>L.totals[b]-L.totals[a]||a-b);
+ const pl=order.map(i=>{const p=PLANS[i];return `<div class="pc${top(i)?' best':''}" style="--c:${p.c};--cb:${mix(p.c,'#ffffff',.93)};--cl:${mix(p.c,'#ffffff',.84)}">${top(i)?'<span class="bg">สูงสุด</span>':''}<h4>${p.n.replace('และคณิต','และ<br>คณิต')}</h4><div class="sc">${fmt(L.totals[i])}<small> / 100</small></div><div class="tr"><i style="width:${L.totals[i]}%"></i></div><p><span>${desc(p)}</span><br>+ เกรดเฉลี่ยรวม 50</p></div>`}).join('');
+ const arc=L.gpa/4*471.2;
+ $('info').innerHTML=`<div class="hd"><div><h1>คำนวณผลการเรียนและคะแนน ม.ต้น (5 ภาคเรียน)</h1><small>${mode?'ห้อง Intensive':'ห้องปกติ และ Gifted'} · กรอกเกรดแล้ว ${L.filled}/30 รายวิชา</small></div><div class="iwho">${esc(meta.name)||'ชื่อ-นามสกุล ........................'}<br><small style="font:400 13px 'Noto Sans Thai'">ชั้น ม.3/${esc(meta.cls)||'...'} เลขที่ ${esc(meta.no)||'...'} · ${d}</small></div></div>
+ <div class="bd"><div class="lc"><div class="th"><span>รายวิชา</span><span>เกรดเฉลี่ย</span><div>${['ม.1-1','ม.1-2','ม.2-1','ม.2-2','ม.3-1'].map(t=>`<b>${t}</b>`).join('')}</div></div><div class="isubs">${subs}</div></div><div class="rt"><div class="ring2"><svg width="212" height="212" viewBox="0 0 190 190"><circle cx="95" cy="95" r="75" fill="none" stroke="#cfdcf5" stroke-width="16"/><circle cx="95" cy="95" r="75" fill="none" stroke="#2563eb" stroke-width="16" stroke-linecap="round" stroke-dasharray="${arc} 471.2"/></svg><div><b>${fmt(L.gpa)}</b><span>เกรดเฉลี่ยรวม (เต็ม 4)</span></div></div><p>คะแนนจากเกรดเฉลี่ยรวม<br><b>${fmt(L.base)}</b> / 50</p><div class="bx" style="--c:${PLANS[L.best].c};--cl:${mix(PLANS[L.best].c,'#ffffff',.82)}"><small>แผนที่ได้คะแนนสูงสุด</small><b>${PLANS[L.best].n.replace('และคณิต','และ<br>คณิต')}</b><strong>${fmt(L.totals[L.best])}</strong> / 100</div></div></div>
+ <div class="pl">${pl}</div>
+ <div class="ft"><span>คะแนนรวม = (เกรดเฉลี่ยรวม ÷ 4 × 50) + คะแนนรายวิชาตามแผน (เกรดเฉลี่ยวิชา ÷ 4 × น้ำหนัก)</span><span>เกรดเฉลี่ยรวม = Σ(เกรด × หน่วยกิต) ÷ 40</span></div>`;
+}
+$('exp').onclick=()=>{pageStyle(true);renderInfo();$('pngwrap').style.display='none';$('wrap').style.display='block';document.body.classList.add('ovo');fit();$('ov').scrollTop=0};
+$('iclose').onclick=()=>{document.body.classList.remove('ovo');pageStyle(false)};
+$('ipdf').onclick=()=>{pageStyle(false);pageStyle(true);window.print()};
+$('pback').onclick=()=>{$('pngwrap').style.display='none';$('wrap').style.display='block'};
+$('ipng').onclick=async()=>{
+ const b=$('ipng');b.disabled=true;b.textContent='กำลังสร้าง...';
+ const st=$('stage'),o=st.style.transform;
+ const nm=('ผลการเรียน-'+(meta.name||'infographic')).replace(/[\\/:*?"<>|]/g,'').trim()+'.png';
+ try{
+  const host=document.createElement('div');
+  host.style.cssText='position:fixed;left:0;top:0;width:1123px;height:792px;margin:0;padding:0;z-index:-1;overflow:hidden';
+  const cl=$('info').cloneNode(true);cl.id='info';cl.style.cssText='width:1123px;height:792px;margin:0';
+  host.appendChild(cl);document.body.appendChild(host);
+  let c;
+  try{
+   if(document.fonts&&document.fonts.ready)await document.fonts.ready;
+   c=await html2canvas(cl,{scale:2,backgroundColor:'#f6f8fc',logging:false,x:0,y:0,width:1123,height:792,scrollX:0,scrollY:0,windowWidth:1123,windowHeight:792});
+  }finally{host.remove()}
+  st.style.transform=o;
+  const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  let done=false;
+  let dl=null;try{dl=await window.claude?.use?.('downloads')}catch(e){}
+  if(dl){
+   try{await dl.save({filename:nm,data:blob});done=true}catch(e){if(e&&e.code==='declined')done=true}
+  }
+  if(!done){
+   const u=URL.createObjectURL(blob),a=document.createElement('a');
+   a.href=u;a.download=nm;document.body.appendChild(a);a.click();a.remove();
+   setTimeout(()=>URL.revokeObjectURL(u),4000);
+  }
+ }catch(e){console.error(e);st.style.transform=o;alert('สร้างรูปไม่สำเร็จ ลองใช้ปุ่มพิมพ์ / บันทึก PDF แทน')}
+ b.disabled=false;b.textContent='สร้างรูป PNG';
+};
+addEventListener('resize',()=>{if(document.body.classList.contains('ovo'))fit()});
+</script>
+</body>
+</html>
